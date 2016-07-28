@@ -1,0 +1,24 @@
+{
+  "name": "carpoolparty",
+  "version": "1.0.0",
+  "description": "A ride sharing program for festival goers look for rides, or offering rides",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jedmendoza/carpoolparty.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jedmendoza/carpoolparty/issues"
+  },
+  "homepage": "https://github.com/jedmendoza/carpoolparty#readme",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "express": "^4.14.0",
+    "mongodb": "^2.2.5"
+  }
+}
