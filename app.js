@@ -24,7 +24,7 @@ app.post('/carpool', function(req, res) {
     } else {
       console.log(req.body)
       rides.insert(
-        {venue: 'does this work?', info: 'how about this?'},
+        {venue: req.body.venue, info: req.body.info, id: req.body.id},
         function(error, result) {
           res.send(result);
           db.close()
