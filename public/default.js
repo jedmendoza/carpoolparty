@@ -12,15 +12,17 @@ makeCarpoolBtn.addEventListener('click', function(e) {
 });
 
 submitRide.addEventListener('click', function(e) {
-  var rideDetails = [];
+  var rideDetails = {};
   rideDetails.venue = festival.value;
   rideDetails.info = rideInfo.value;
-  console.log(rideDetails);
 
   var xhr = new XMLHttpRequest();
   xhr.open('POST', '/carpool');
-  xhr.setRequestHeader('')
-  xhr.send()
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send(JSON.stringify(rideDetails));
+  // xhr.send();
+
+  console.log(rideDetails)
 });
 
 cancel.addEventListener('click', function(e) {
