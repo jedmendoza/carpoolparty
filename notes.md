@@ -14,3 +14,9 @@
   prevent default on form submit
 
   listen for submit event on form instead of the button
+
+  make sure route resources match collections
+
+  ALWAYS USE A LINTER
+
+  Don't code ahead

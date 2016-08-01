@@ -7,9 +7,6 @@ var festival = $('#festival-name');
 var ride = document.getElementById('hitch');
 var newCarpool = $('#new-carpool');
 var seats = $('#seats');
-var ca
-
-
 
 makeCarpoolBtn.on('click', function(e) {
   $('#carpool-info').removeClass('hidden')
@@ -43,24 +40,50 @@ newCarpool.on('submit', function(e) {
     console.log(response.venue);
 
     var rideDiv = document.createElement('div');
-    rideDiv.setAttribute('class', 'col-md-3');
+    rideDiv.className = 'col-md-3';
+    rideDiv.setAttribute('id', response.chatId)
 
     var ridePanel = document.createElement('div');
-    ridePanel.setAttribute('class', 'panel panel-default');
+    ridePanel.className = 'panel panel-default'
+
+    var heading = document.createElement('div');
+    heading.className = 'panel-heading text-center'
+    heading.textContent = response.venue;
 
     var body = document.createElement('div');
-    body.setAttribute('class', 'panel-body');
+    body.className = 'panel-body'
 
     var info = document.createElement('p');
     info.textContent = response.info;
+
+    var toolbar = document.createElement('div');
+    toolbar.className = 'btn-toolbar';
+
+    var btnDiv = document.createElement('div');
+    btnDiv.className = 'btn-group';
+
+    var join = document.createElement('button');
+    join.className = 'btn';
+    join.textContent = "Join";
+
+    var chat = document.createElement('button');
+    chat.className = 'btn';
+    chat.textContent = "Chat";
+
+    toolbar.appendChild(btnDiv);
+    btnDiv.appendChild(join);
+    btnDiv.appendChild(chat);
+
 
     // var buttons = document.createElement('button');
     // button.setAttribute('')
 
     ride.appendChild(rideDiv);
     rideDiv.appendChild(ridePanel);
+    ridePanel.appendChild(heading);
     ridePanel.appendChild(body);
     body.appendChild(info);
+    body.appendChild(toolbar);
 
   });
 });
@@ -71,9 +94,12 @@ cancel.addEventListener('click', function(e) {
 });
 
 function resetRide() {
-  festival.val('1');
+  festival.val('Coachella');
   rideInfo.val("");
   seats.val('1');
+}
+
+function getSeats(response) {
 }
 // function makeRide() {
 //   var rideDiv = document.createElement('div');
