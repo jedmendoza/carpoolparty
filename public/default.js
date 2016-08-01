@@ -12,6 +12,19 @@ makeCarpoolBtn.addEventListener('click', function(e) {
   $('#carpool-info').removeClass('hidden')
 });
 
+// window.addEventListener('load', function() {
+//   var xhr = new XMLHttpRequest();
+//   xhr.open('GET', '/test');
+//   xhr.send();
+//   console.log('you are here');
+//
+//   xhr.addEventListener('load', function() {
+//     var response = xhr.response;
+//     console.log(response);
+//   })
+// })
+
+//Sends ridedetails into MongoDB
 submitRide.addEventListener('click', function(e) {
 
   var rideDetails = {};
@@ -22,15 +35,34 @@ submitRide.addEventListener('click', function(e) {
   rideDetails.id = rideId;
 
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/carpool');
+  xhr.open('POST', '/carpool/create');
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(rideDetails));
-
-  makeRide();
 
   $('#carpool-info').addClass('hidden');
 
   xhr.addEventListener('load', function() {
+    var response = JSON.parse(xhr.response);
+    console.log(response);
+    console.log(response.ops.info);
+
+    var rideDiv = document.createElement('div');
+    rideDiv.setAttribute('class', 'col-md-3');
+
+    var ridePanel = document.createElement('div');
+    ridePanel.setAttribute('class', 'panel panel-default');
+
+    var body = document.createElement('div');
+    body.setAttribute('class', 'panel-body');
+
+    var info = document.createElement('p');
+    info.textContent = response.info;
+
+    ride.appendChild(rideDiv);
+    rideDiv.appendChild(ridePanel);
+    ridePanel.appendChild(body);
+    body.appendChild(info);
+
 
   })
 
@@ -38,7 +70,6 @@ submitRide.addEventListener('click', function(e) {
 
 cancel.addEventListener('click', function(e) {
   rideInfo.value = '';
-  festiv
   $('#carpool-info').addClass('hidden')
 });
 
@@ -52,11 +83,12 @@ function makeRide() {
   var body = document.createElement('div');
   body.setAttribute('class', 'panel-body');
 
-  var text = document.createElement('p');
-  text.setAttribute('text', festival.venue)
+  var info = document.createElement('p');
+  info.textContent = response;
 
   ride.appendChild(rideDiv);
   rideDiv.appendChild(ridePanel);
   ridePanel.appendChild(body);
-  body.appendChild(text);
+  body.appendChild(info);
+
 }
