@@ -14,48 +14,19 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html')
 });
 
-// app.get('/', function(req, res) {
-//   Client.connect(url, function(error, db) {
-//     var rides = db.collection('rides');
-//     rides.find({}).toArray(function(error, result) {
-//       console.log(result)
-//     })
-//   })
-//   // res.sendFile(__dirname + '/index.html');
-//   // res.send()
-//   res.end()
-// });
-
-app.get('/test', function(req, res) {
+app.post('/rides/create', function(req, res) {
   Client.connect(url, function(error, db) {
     var rides = db.collection('rides');
     if (error) {
       console.log(error);
-      res.send(404);
-      db.close()
-    } else {
-      rides.find({venue: ''}).toArray(function(error, result) {
-        db.close();
-        res.send(result);
-        // console.log(result)
-      })
-    }
-  });
-});
-
-app.post('/carpool/create', function(req, res) {
-  Client.connect(url, function(error, db) {
-    var rides = db.collection('rides');
-    if (error) {
-      console.log(error);
-      res.send(404);
+      res.send(500);
       db.close()
     } else {
       // console.log(req.body)
       rides.insert(
-        {venue: req.body.venue, info: req.body.info, id: req.body.id},
+        {venue: req.body.venue, info: req.body.info, chatId: req.body.chatId, seats: req.body.seats},
         function(error, result) {
-          // res.send(result);
+          res.json(result.ops[0]);
           console.log(result);
           db.close()
         }
@@ -63,5 +34,9 @@ app.post('/carpool/create', function(req, res) {
     }
   });
 });
+
+app.get('/rides', function(req, res) {
+  Client.connect()
+})
 
 app.listen(8080);
