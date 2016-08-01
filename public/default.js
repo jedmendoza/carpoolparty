@@ -1,13 +1,15 @@
-var makeCarpoolBtn = $('#carpool-btn');
-// var carpoolDiv = document.getElementById('carpool-info');
 var cancel = document.getElementById('cancel-ride');
-var rideInfo = document.getElementById('ride-info');
 var submitRide = document.getElementById('submit-ride');
-var festival = document.getElementById('festival-name');
+
+var makeCarpoolBtn = $('#carpool-btn');
+var rideInfo = $('#ride-info');
+var festival = $('#festival-name');
 var ride = document.getElementById('hitch');
 var newCarpool = $('#new-carpool');
-var seats = document.getElementById('seats');
-// var rideInfo = document.getElementById('ride-info');
+var seats = $('#seats');
+var ca
+
+
 
 makeCarpoolBtn.on('click', function(e) {
   $('#carpool-info').removeClass('hidden')
@@ -22,17 +24,17 @@ newCarpool.on('submit', function(e) {
   var chatId = Date.now();
   console.log(chatId)
 
-  rideDetails.venue = festival.value;
-  rideDetails.info = rideInfo.value;
+  rideDetails.venue = festival.val();
+  rideDetails.info = rideInfo.val();
   rideDetails.chatId = chatId;
-  rideDetails.seats = seats.value;
+  rideDetails.seats = seats.val();
 
   var xhr = new XMLHttpRequest();
   xhr.open('POST', '/rides/create');
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(rideDetails));
 
-  rideInfo.value = '';
+  resetRide();
 
   $('#carpool-info').addClass('hidden');
 
@@ -52,8 +54,8 @@ newCarpool.on('submit', function(e) {
     var info = document.createElement('p');
     info.textContent = response.info;
 
-    var buttons = document.createElement('button');
-    button.setAttribute('')
+    // var buttons = document.createElement('button');
+    // button.setAttribute('')
 
     ride.appendChild(rideDiv);
     rideDiv.appendChild(ridePanel);
@@ -68,6 +70,11 @@ cancel.addEventListener('click', function(e) {
   $('#carpool-info').addClass('hidden')
 });
 
+function resetRide() {
+  festival.val('1');
+  rideInfo.val("");
+  seats.val('1');
+}
 // function makeRide() {
 //   var rideDiv = document.createElement('div');
 //   rideDiv.setAttribute('class', 'col-md-3');
