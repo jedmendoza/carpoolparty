@@ -27,7 +27,6 @@ app.get('/rides', function(req, res) {
           db.close();
         } else {
           res.json(result);
-          console.log(result);
           db.close()
         }
       })
@@ -39,7 +38,6 @@ app.post('/rides/create', function(req, res) {
   Client.connect(url, function(error, db) {
     var rides = db.collection('rides');
     if (error) {
-      console.log(error);
       res.send(500);
       db.close()
     } else {
@@ -48,7 +46,6 @@ app.post('/rides/create', function(req, res) {
         {venue: req.body.venue, info: req.body.info, chatId: req.body.chatId, seats: req.body.seats},
         function(error, result) {
           res.json(result.ops[0]);
-          console.log(result);
           db.close()
         }
       )
@@ -56,8 +53,21 @@ app.post('/rides/create', function(req, res) {
   });
 });
 
-app.get('/rides', function(req, res) {
-  Client.connect()
+app.put('/rides/:chatId', function(req, res) {
+  Client.connect(url, function(error, db) {
+    var rides = db.collection('rides');
+    if (error) {
+      res.send(500)
+      db.close()
+    } else {
+      var theId = parseInt(req.params.chatId);
+      rides.update({chatId: theId},
+      {$inc: {seats: -1}}, {upsert: true}, function(error, result) {
+        res.end();
+        db.close();
+      })
+    }
+  });
 });
 
 

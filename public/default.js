@@ -7,7 +7,56 @@ var festival = $('#festival-name');
 var ride = document.getElementById('hitch');
 var newCarpool = $('#new-carpool');
 var seats = $('#seats');
+var hitch = document.getElementById('hitch');
 
+function resetRide() {
+  festival.val('Coachella');
+  rideInfo.val("");
+  seats.val('1');
+};
+
+function makeRide(response) {
+  var rideDiv = document.createElement('div');
+  rideDiv.className = 'col-md-3';
+
+  var ridePanel = document.createElement('div');
+  ridePanel.className = 'panel panel-default'
+
+  var heading = document.createElement('div');
+  heading.className = 'panel-heading text-center'
+  heading.textContent = response.venue;
+
+  var body = document.createElement('div');
+  body.className = 'panel-body'
+
+  var info = document.createElement('p');
+  info.textContent = response.info;
+
+  var toolbar = document.createElement('div');
+  toolbar.className = 'btn-toolbar';
+
+  var btnDiv = document.createElement('div');
+  btnDiv.className = 'btn-group';
+
+  var join = document.createElement('button');
+  join.className = 'btn';
+  join.textContent = "Join";
+  join.setAttribute('data-id', 'join' + response.chatId)
+
+  var chat = document.createElement('button');
+  chat.className = 'btn';
+  chat.textContent = "Chat";
+
+  toolbar.appendChild(btnDiv);
+  btnDiv.appendChild(join);
+  btnDiv.appendChild(chat);
+  ride.appendChild(rideDiv);
+  rideDiv.appendChild(ridePanel);
+  ridePanel.appendChild(heading);
+  ridePanel.appendChild(body);
+  body.appendChild(info);
+  body.appendChild(toolbar);
+};
 
 window.addEventListener('DOMContentLoaded', function() {
   var xhr = new XMLHttpRequest();
@@ -23,6 +72,7 @@ window.addEventListener('DOMContentLoaded', function() {
     })
   });
 });
+
 
 //User can create new carpool
 makeCarpoolBtn.on('click', function(e) {
@@ -41,7 +91,7 @@ newCarpool.on('submit', function(e) {
   rideDetails.venue = festival.val();
   rideDetails.info = rideInfo.val();
   rideDetails.chatId = chatId;
-  rideDetails.seats = seats.val();
+  rideDetails.seats = parseInt(seats.val());
 
   var xhr = new XMLHttpRequest();
   xhr.open('POST', '/rides/create');
@@ -66,74 +116,11 @@ cancel.addEventListener('click', function(e) {
   $('#carpool-info').addClass('hidden')
 });
 
-function resetRide() {
-  festival.val('Coachella');
-  rideInfo.val("");
-  seats.val('1');
-}
-
-function getSeats(response) {
-};
-
-function makeRide(response) {
-  var rideDiv = document.createElement('div');
-  rideDiv.className = 'col-md-3';
-  rideDiv.setAttribute('id', response.chatId)
-
-  var ridePanel = document.createElement('div');
-  ridePanel.className = 'panel panel-default'
-
-  var heading = document.createElement('div');
-  heading.className = 'panel-heading text-center'
-  heading.textContent = response.venue;
-
-  var body = document.createElement('div');
-  body.className = 'panel-body'
-
-  var info = document.createElement('p');
-  info.textContent = response.info;
-
-  var toolbar = document.createElement('div');
-  toolbar.className = 'btn-toolbar';
-
-  var btnDiv = document.createElement('div');
-  btnDiv.className = 'btn-group';
-
-  var join = document.createElement('button');
-  join.className = 'btn';
-  join.textContent = "Join";
-
-  var chat = document.createElement('button');
-  chat.className = 'btn';
-  chat.textContent = "Chat";
-
-  toolbar.appendChild(btnDiv);
-  btnDiv.appendChild(join);
-  btnDiv.appendChild(chat);
-  ride.appendChild(rideDiv);
-  rideDiv.appendChild(ridePanel);
-  ridePanel.appendChild(heading);
-  ridePanel.appendChild(body);
-  body.appendChild(info);
-  body.appendChild(toolbar);
-};
-
-// function makeRide() {
-//   var rideDiv = document.createElement('div');
-//   rideDiv.setAttribute('class', 'col-md-3');
-//
-//   var ridePanel = document.createElement('div');
-//   ridePanel.setAttribute('class', 'panel panel-default');
-//
-//   var body = document.createElement('div');
-//   body.setAttribute('class', 'panel-body');
-//
-//   var info = document.createElement('p');
-//   info.textContent = response;
-//
-//   ride.appendChild(rideDiv);
-//   rideDiv.appendChild(ridePanel);
-//   ridePanel.appendChild(body);
-//   body.appendChild(info);
-//
-// }
+hitch.addEventListener('click', function(e) {
+  var target = e.target.getAttribute('data-id');
+  var param = target.slice(4, 17);
+  console.log(param);
+  var xhr = new XMLHttpRequest();
+  xhr.open('PUT', '/rides/' + param);
+  xhr.send()
+})
