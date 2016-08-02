@@ -8,6 +8,23 @@ var ride = document.getElementById('hitch');
 var newCarpool = $('#new-carpool');
 var seats = $('#seats');
 
+
+window.addEventListener('DOMContentLoaded', function() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/rides');
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send();
+
+  xhr.addEventListener('load', function() {
+    var response = JSON.parse(xhr.responseText);
+    // console.log(response);
+    response.forEach(function(result) {
+      makeRide(result);
+    })
+  });
+});
+
+//User can create new carpool
 makeCarpoolBtn.on('click', function(e) {
   $('#carpool-info').removeClass('hidden')
 });
@@ -39,51 +56,7 @@ newCarpool.on('submit', function(e) {
     var response = JSON.parse(xhr.response);
     console.log(response.venue);
 
-    var rideDiv = document.createElement('div');
-    rideDiv.className = 'col-md-3';
-    rideDiv.setAttribute('id', response.chatId)
-
-    var ridePanel = document.createElement('div');
-    ridePanel.className = 'panel panel-default'
-
-    var heading = document.createElement('div');
-    heading.className = 'panel-heading text-center'
-    heading.textContent = response.venue;
-
-    var body = document.createElement('div');
-    body.className = 'panel-body'
-
-    var info = document.createElement('p');
-    info.textContent = response.info;
-
-    var toolbar = document.createElement('div');
-    toolbar.className = 'btn-toolbar';
-
-    var btnDiv = document.createElement('div');
-    btnDiv.className = 'btn-group';
-
-    var join = document.createElement('button');
-    join.className = 'btn';
-    join.textContent = "Join";
-
-    var chat = document.createElement('button');
-    chat.className = 'btn';
-    chat.textContent = "Chat";
-
-    toolbar.appendChild(btnDiv);
-    btnDiv.appendChild(join);
-    btnDiv.appendChild(chat);
-
-
-    // var buttons = document.createElement('button');
-    // button.setAttribute('')
-
-    ride.appendChild(rideDiv);
-    rideDiv.appendChild(ridePanel);
-    ridePanel.appendChild(heading);
-    ridePanel.appendChild(body);
-    body.appendChild(info);
-    body.appendChild(toolbar);
+    makeRide(response);
 
   });
 });
@@ -100,7 +73,51 @@ function resetRide() {
 }
 
 function getSeats(response) {
-}
+};
+
+function makeRide(response) {
+  var rideDiv = document.createElement('div');
+  rideDiv.className = 'col-md-3';
+  rideDiv.setAttribute('id', response.chatId)
+
+  var ridePanel = document.createElement('div');
+  ridePanel.className = 'panel panel-default'
+
+  var heading = document.createElement('div');
+  heading.className = 'panel-heading text-center'
+  heading.textContent = response.venue;
+
+  var body = document.createElement('div');
+  body.className = 'panel-body'
+
+  var info = document.createElement('p');
+  info.textContent = response.info;
+
+  var toolbar = document.createElement('div');
+  toolbar.className = 'btn-toolbar';
+
+  var btnDiv = document.createElement('div');
+  btnDiv.className = 'btn-group';
+
+  var join = document.createElement('button');
+  join.className = 'btn';
+  join.textContent = "Join";
+
+  var chat = document.createElement('button');
+  chat.className = 'btn';
+  chat.textContent = "Chat";
+
+  toolbar.appendChild(btnDiv);
+  btnDiv.appendChild(join);
+  btnDiv.appendChild(chat);
+  ride.appendChild(rideDiv);
+  rideDiv.appendChild(ridePanel);
+  ridePanel.appendChild(heading);
+  ridePanel.appendChild(body);
+  body.appendChild(info);
+  body.appendChild(toolbar);
+};
+
 // function makeRide() {
 //   var rideDiv = document.createElement('div');
 //   rideDiv.setAttribute('class', 'col-md-3');

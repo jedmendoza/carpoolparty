@@ -14,6 +14,27 @@ app.get('/', function(req, res) {
   res.sendFile(__dirname + '/index.html')
 });
 
+app.get('/rides', function(req, res) {
+  Client.connect(url, function(error, db) {
+    var rides = db.collection('rides');
+    if (error) {
+      res.send(500);
+      db.close()
+    } else {
+      rides.find({}).toArray(function(error, result) {
+        if (error) {
+          res.send(500);
+          db.close();
+        } else {
+          res.json(result);
+          console.log(result);
+          db.close()
+        }
+      })
+    }
+  });
+});
+
 app.post('/rides/create', function(req, res) {
   Client.connect(url, function(error, db) {
     var rides = db.collection('rides');
@@ -37,6 +58,10 @@ app.post('/rides/create', function(req, res) {
 
 app.get('/rides', function(req, res) {
   Client.connect()
-})
+});
+
+
+//continue to work on this.
+
 
 app.listen(8080);
