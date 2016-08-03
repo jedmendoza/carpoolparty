@@ -7,6 +7,7 @@ var ride = document.getElementById('hitch');
 var newCarpool = $('#new-carpool');
 var seats = $('#seats');
 var hitch = document.getElementById('hitch');
+var landing = $('#landing');
 
 function resetRide() {
   festival.val('Coachella');
@@ -47,6 +48,7 @@ function makeRide(response) {
   var chat = document.createElement('button');
   chat.className = 'btn';
   chat.textContent = "Chat";
+  chat.setAttribute('data-chat', 'chat' +response.chatId);
 
   toolbar.appendChild(btnDiv);
   btnDiv.appendChild(join);
@@ -114,33 +116,70 @@ newCarpool.on('submit', function(e) {
   });
 });
 
+//User can cancel making a ride
 cancel.addEventListener('click', function(e) {
   rideInfo.value = '';
   $('#carpool-info').addClass('hidden')
 });
 
+
+//User can join ride
 hitch.addEventListener('click', function(e) {
-  var target = e.target.getAttribute('data-id');
-  var param = target.slice(4, 17);
+  // var target = e.target.getAttribute('data-id') || e.target.getAttribute('data-chat');
 
-  var xhr = new XMLHttpRequest();
-  xhr.open('PUT', '/rides/' + param);
-  xhr.send()
 
-  xhr.addEventListener('load', function() {
-    var response = JSON.parse(xhr.response);
-    console.log(response);
-    clear(hitch)
-    response.forEach(function(result) {
-      if (result.seats >= 0){
-        makeRide(result)
-      }
+  var sessions = {}
+
+  var join = e.target.getAttribute('data-id');
+  var chat = e.target.getAttribute('data-chat');
+  e.preventDefault();
+
+  if (join) {
+    var param = join.slice(4, 17);
+    var xhr = new XMLHttpRequest();
+    xhr.open('PUT', '/rides/' + param);
+    xhr.send()
+
+    xhr.addEventListener('load', function() {
+      var response = JSON.parse(xhr.response);
+      clear(hitch)
+      response.forEach(function(result) {
+        if (result.seats >= 0){
+          makeRide(result)
+        }
+      })
     });
-  });
+  } else if (chat) {
+    // landing.addClass('hidden');
+    // var param = chat.slice(4, 17);
+    // console.log(param)
+    // var xhr = new XMLHttpRequest();
+    // xhr.open('GET', 'rides/chat/' + param);
+    // xhr.send()
+
+    function makeChat() {
+      var div = document.createElement('div');
+      div.className = 'col-md-6';
+      var panel = document.createElement('div');
+      div.className = 'panel panel-default';
+      var messageArea = document.createElement('div');
+      messageArea.className = 'panel-body';
+
+
+
+    }
+  }
 });
 
 function clear(area) {
   while(area.firstChild) {
     area.removeChild(area.firstChild)
   }
-}
+};
+
+var socket = io();
+$('#test-form').submit(function() {
+  socket.emit('chat message', $('#chat-input').val());
+  $('#chat-input').val('');
+  return false;
+});

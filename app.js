@@ -2,7 +2,8 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var Client = require('mongodb').MongoClient;
 var app = express();
-
+var http = require('http').Server(app);
+var io = require('socket.io')(http);
 var url = 'mongodb://localhost:27017/carpoolparty';
 var jsonParser = bodyParser.json();
 
@@ -72,7 +73,21 @@ app.put('/rides/:chatId', function(req, res) {
 });
 
 
-//continue to work on this.
+io.on('connection', function(socket) {
+  console.log('user connected');
+  socket.on('chat message', function(message) {
+    console.log('message: ' + message);
+  });
+});
+
+// app.get('/rides/chat/:id', function(req, res) {
+//   console.log(req.params)
+//   res.send()
+// });
 
 
-app.listen(8080);
+http.listen(8080, function() {
+  console.log('listening on 8080')
+})
+
+// app.listen(8080);
