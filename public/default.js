@@ -1,62 +1,139 @@
-var makeCarpoolBtn = document.getElementById('carpool-btn');
-var carpoolDiv = document.getElementById('carpool-info');
 var cancel = document.getElementById('cancel-ride');
-var rideInfo = document.getElementById('ride-info');
 var submitRide = document.getElementById('submit-ride');
-var festival = document.getElementById('festival-name');
+
+var makeCarpoolBtn = $('#carpool-btn');
+var rideInfo = $('#ride-info');
+var festival = $('#festival-name');
 var ride = document.getElementById('hitch');
-// var rideInfo = document.getElementById('ride-info');
+var newCarpool = $('#new-carpool');
+var seats = $('#seats');
 
 
-makeCarpoolBtn.addEventListener('click', function(e) {
+window.addEventListener('DOMContentLoaded', function() {
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', '/rides');
+  xhr.setRequestHeader('Content-type', 'application/json');
+  xhr.send();
+
+  xhr.addEventListener('load', function() {
+    var response = JSON.parse(xhr.responseText);
+    // console.log(response);
+    response.forEach(function(result) {
+      makeRide(result);
+    })
+  });
+});
+
+//User can create new carpool
+makeCarpoolBtn.on('click', function(e) {
   $('#carpool-info').removeClass('hidden')
 });
 
-submitRide.addEventListener('click', function(e) {
+//Sends ridedetails into MongoDB
+newCarpool.on('submit', function(e) {
+
+  e.preventDefault();
 
   var rideDetails = {};
-  var rideId = Date.now();
+  var chatId = Date.now();
+  console.log(chatId)
 
-  rideDetails.venue = festival.value;
-  rideDetails.info = rideInfo.value;
-  rideDetails.id = rideId;
+  rideDetails.venue = festival.val();
+  rideDetails.info = rideInfo.val();
+  rideDetails.chatId = chatId;
+  rideDetails.seats = seats.val();
 
   var xhr = new XMLHttpRequest();
-  xhr.open('POST', '/carpool');
+  xhr.open('POST', '/rides/create');
   xhr.setRequestHeader('Content-type', 'application/json');
   xhr.send(JSON.stringify(rideDetails));
 
-  makeRide();
+  resetRide();
 
   $('#carpool-info').addClass('hidden');
 
   xhr.addEventListener('load', function() {
+    var response = JSON.parse(xhr.response);
+    console.log(response.venue);
 
-  })
+    makeRide(response);
 
+  });
 });
 
 cancel.addEventListener('click', function(e) {
   rideInfo.value = '';
-  festiv
   $('#carpool-info').addClass('hidden')
 });
 
-function makeRide() {
+function resetRide() {
+  festival.val('Coachella');
+  rideInfo.val("");
+  seats.val('1');
+}
+
+function getSeats(response) {
+};
+
+function makeRide(response) {
   var rideDiv = document.createElement('div');
-  rideDiv.setAttribute('class', 'col-md-3');
+  rideDiv.className = 'col-md-3';
+  rideDiv.setAttribute('id', response.chatId)
 
   var ridePanel = document.createElement('div');
-  ridePanel.setAttribute('class', 'panel panel-default');
+  ridePanel.className = 'panel panel-default'
+
+  var heading = document.createElement('div');
+  heading.className = 'panel-heading text-center'
+  heading.textContent = response.venue;
 
   var body = document.createElement('div');
-  body.setAttribute('class', 'panel-body');
+  body.className = 'panel-body'
 
-  var text = document.createElement('p');
-  text.setAttribute('text', festival.venue)
+  var info = document.createElement('p');
+  info.textContent = response.info;
 
+  var toolbar = document.createElement('div');
+  toolbar.className = 'btn-toolbar';
+
+  var btnDiv = document.createElement('div');
+  btnDiv.className = 'btn-group';
+
+  var join = document.createElement('button');
+  join.className = 'btn';
+  join.textContent = "Join";
+
+  var chat = document.createElement('button');
+  chat.className = 'btn';
+  chat.textContent = "Chat";
+
+  toolbar.appendChild(btnDiv);
+  btnDiv.appendChild(join);
+  btnDiv.appendChild(chat);
   ride.appendChild(rideDiv);
   rideDiv.appendChild(ridePanel);
+  ridePanel.appendChild(heading);
   ridePanel.appendChild(body);
-  body.appendChild(text);
-}
+  body.appendChild(info);
+  body.appendChild(toolbar);
+};
+
+// function makeRide() {
+//   var rideDiv = document.createElement('div');
+//   rideDiv.setAttribute('class', 'col-md-3');
+//
+//   var ridePanel = document.createElement('div');
+//   ridePanel.setAttribute('class', 'panel panel-default');
+//
+//   var body = document.createElement('div');
+//   body.setAttribute('class', 'panel-body');
+//
+//   var info = document.createElement('p');
+//   info.textContent = response;
+//
+//   ride.appendChild(rideDiv);
+//   rideDiv.appendChild(ridePanel);
+//   ridePanel.appendChild(body);
+//   body.appendChild(info);
+//
+// }

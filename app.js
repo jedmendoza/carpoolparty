@@ -11,27 +11,57 @@ app.use(express.static('./public'));
 app.use(jsonParser);
 
 app.get('/', function(req, res) {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/index.html')
 });
 
-app.post('/carpool', function(req, res) {
+app.get('/rides', function(req, res) {
+  Client.connect(url, function(error, db) {
+    var rides = db.collection('rides');
+    if (error) {
+      res.send(500);
+      db.close()
+    } else {
+      rides.find({}).toArray(function(error, result) {
+        if (error) {
+          res.send(500);
+          db.close();
+        } else {
+          res.json(result);
+          console.log(result);
+          db.close()
+        }
+      })
+    }
+  });
+});
+
+app.post('/rides/create', function(req, res) {
   Client.connect(url, function(error, db) {
     var rides = db.collection('rides');
     if (error) {
       console.log(error);
-      res.send(404);
+      res.send(500);
       db.close()
     } else {
-      console.log(req.body)
+      // console.log(req.body)
       rides.insert(
-        {venue: req.body.venue, info: req.body.info, id: req.body.id},
+        {venue: req.body.venue, info: req.body.info, chatId: req.body.chatId, seats: req.body.seats},
         function(error, result) {
-          res.send(result);
+          res.json(result.ops[0]);
+          console.log(result);
           db.close()
         }
       )
     }
   });
 });
+
+app.get('/rides', function(req, res) {
+  Client.connect()
+});
+
+
+//continue to work on this.
+
 
 app.listen(8080);
