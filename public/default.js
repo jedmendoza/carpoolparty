@@ -69,7 +69,9 @@ window.addEventListener('DOMContentLoaded', function() {
     var response = JSON.parse(xhr.responseText);
     // console.log(response);
     response.forEach(function(result) {
-      makeRide(result);
+      if (result.seats >= 0) {
+        makeRide(result);
+      }
     })
   });
 });
@@ -119,12 +121,7 @@ cancel.addEventListener('click', function(e) {
 
 hitch.addEventListener('click', function(e) {
   var target = e.target.getAttribute('data-id');
-  // var test = this.childNode.getAttribute('id');
-  // console.log(test)
-
-
   var param = target.slice(4, 17);
-
 
   var xhr = new XMLHttpRequest();
   xhr.open('PUT', '/rides/' + param);
@@ -135,15 +132,12 @@ hitch.addEventListener('click', function(e) {
     console.log(response);
     clear(hitch)
     response.forEach(function(result) {
-      console.log(result)
-      makeRide(result)
-    })
-
-  })
-})
-
-
-
+      if (result.seats >= 0){
+        makeRide(result)
+      }
+    });
+  });
+});
 
 function clear(area) {
   while(area.firstChild) {
