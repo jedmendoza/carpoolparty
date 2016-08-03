@@ -41,7 +41,6 @@ app.post('/rides/create', function(req, res) {
       res.send(500);
       db.close()
     } else {
-      // console.log(req.body)
       rides.insert(
         {venue: req.body.venue, info: req.body.info, chatId: req.body.chatId, seats: req.body.seats},
         function(error, result) {
@@ -63,7 +62,7 @@ app.put('/rides/:chatId', function(req, res) {
       var theId = parseInt(req.params.chatId);
       rides.update({chatId: theId},
       {$inc: {seats: -1}}, {upsert: true}, function(error, result) {
-        res.end();
+        res.json(result);
         db.close();
       })
     }

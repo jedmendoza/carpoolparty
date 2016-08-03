@@ -1,6 +1,5 @@
 var cancel = document.getElementById('cancel-ride');
 var submitRide = document.getElementById('submit-ride');
-
 var makeCarpoolBtn = $('#carpool-btn');
 var rideInfo = $('#ride-info');
 var festival = $('#festival-name');
@@ -27,10 +26,12 @@ function makeRide(response) {
   heading.textContent = response.venue;
 
   var body = document.createElement('div');
-  body.className = 'panel-body'
+  body.className = 'panel-body';
+  body.textContent = response.info;
 
-  var info = document.createElement('p');
-  info.textContent = response.info;
+  var info = document.createElement('h3');
+  info.textContent = 5-response.seats + '/5';
+  info.setAttribute('id', 'count' + response.chatId)
 
   var toolbar = document.createElement('div');
   toolbar.className = 'btn-toolbar';
@@ -118,9 +119,27 @@ cancel.addEventListener('click', function(e) {
 
 hitch.addEventListener('click', function(e) {
   var target = e.target.getAttribute('data-id');
+  // var test = this.childNode.getAttribute('id');
+  // console.log(test)
+
+
   var param = target.slice(4, 17);
-  console.log(param);
+
+
   var xhr = new XMLHttpRequest();
   xhr.open('PUT', '/rides/' + param);
   xhr.send()
-})
+
+  xhr.addEventListener('load', function() {
+    console.log(xhr.response)
+  })
+  })
+
+
+
+
+function clear(area) {
+  while(area.firstChild) {
+    area.removeChild(area.firstChild)
+  }
+}
