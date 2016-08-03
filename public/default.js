@@ -128,8 +128,6 @@ hitch.addEventListener('click', function(e) {
   // var target = e.target.getAttribute('data-id') || e.target.getAttribute('data-chat');
 
 
-  var sessions = {}
-
   var join = e.target.getAttribute('data-id');
   var chat = e.target.getAttribute('data-chat');
   e.preventDefault();
@@ -150,26 +148,36 @@ hitch.addEventListener('click', function(e) {
       })
     });
   } else if (chat) {
-    // landing.addClass('hidden');
-    // var param = chat.slice(4, 17);
-    // console.log(param)
-    // var xhr = new XMLHttpRequest();
-    // xhr.open('GET', 'rides/chat/' + param);
-    // xhr.send()
+    var messageUl = chat.slice(4, 17);
+    console.log(messageUl)
 
     function makeChat() {
       var div = document.createElement('div');
       div.className = 'col-md-6';
+
       var panel = document.createElement('div');
       div.className = 'panel panel-default';
+
       var messageArea = document.createElement('div');
       messageArea.className = 'panel-body';
 
+      var message = document.createElement('ul');
+      message.setAttribute('id', messageUl);
 
+      var input = document.createElement('input');
+      input.setAttribute('class', 'text')
 
     }
   }
 });
+
+// landing.addClass('hidden');
+// var param = chat.slice(4, 17);
+// console.log(param)
+// var xhr = new XMLHttpRequest();
+// xhr.open('GET', 'rides/chat/' + param);
+// xhr.send()
+
 
 function clear(area) {
   while(area.firstChild) {
@@ -182,4 +190,8 @@ $('#test-form').submit(function() {
   socket.emit('chat message', $('#chat-input').val());
   $('#chat-input').val('');
   return false;
+});
+socket.on('chat message', function(message) {
+  $('#' + 'chat').append($('<li>').text(message));
+  console.log(message);
 });
