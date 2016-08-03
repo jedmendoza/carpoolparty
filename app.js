@@ -62,8 +62,10 @@ app.put('/rides/:chatId', function(req, res) {
       var theId = parseInt(req.params.chatId);
       rides.update({chatId: theId},
       {$inc: {seats: -1}}, {upsert: true}, function(error, result) {
-        res.json(result);
-        db.close();
+        rides.find({}).toArray(function(error, result) {
+          res.json(result)
+          db.close();
+        });
       })
     }
   });

@@ -131,9 +131,16 @@ hitch.addEventListener('click', function(e) {
   xhr.send()
 
   xhr.addEventListener('load', function() {
-    console.log(xhr.response)
+    var response = JSON.parse(xhr.response);
+    console.log(response);
+    clear(hitch)
+    response.forEach(function(result) {
+      console.log(result)
+      makeRide(result)
+    })
+
   })
-  })
+})
 
 
 
