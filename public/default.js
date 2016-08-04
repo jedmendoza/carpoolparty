@@ -146,8 +146,9 @@ hitch.addEventListener('click', function(e) {
           makeRide(result)
         }
       })
-    });
+    })
   } else if (chat) {
+    var chatArea = document.getElementById('chat-area');
     var messageUl = chat.slice(4, 17);
     console.log(messageUl)
 
@@ -161,13 +162,35 @@ hitch.addEventListener('click', function(e) {
       var messageArea = document.createElement('div');
       messageArea.className = 'panel-body';
 
+      var form = document.createElement('form');
+      form.setAttribute('id', 'form' + messageUl);
+
       var message = document.createElement('ul');
-      message.setAttribute('id', messageUl);
+      message.setAttribute('id', 'chat' + messageUl);
 
       var input = document.createElement('input');
-      input.setAttribute('class', 'text')
+      input.setAttribute('class', 'text');
+      input.setAttribute('id', 'text' + messageUl);
 
+      chatArea.appendChild(div);
+      div.appendChild(panel);
+      panel.appendChild(messageArea);
+      messageArea.appendChild(form);
+      form.appendChild(message);
+      form.appendChild(input);
+
+      var socket = io();
+      $('#' + 'form' + messageUl.toString()).submit(function() {
+        socket.emit('chat message', $('#text' + messageUl.toString()).val());
+        $('#text' + messageUl.toString()).val('');
+        return false;
+      });
+      socket.on('chat message', function(message) {
+        $('#chat' + messageUl.toString()).append($('<li>').text(message));
+        console.log(message);
+      });
     }
+    makeChat();
   }
 });
 
@@ -184,14 +207,3 @@ function clear(area) {
     area.removeChild(area.firstChild)
   }
 };
-
-var socket = io();
-$('#test-form').submit(function() {
-  socket.emit('chat message', $('#chat-input').val());
-  $('#chat-input').val('');
-  return false;
-});
-socket.on('chat message', function(message) {
-  $('#' + 'chat').append($('<li>').text(message));
-  console.log(message);
-});
