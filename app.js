@@ -81,10 +81,17 @@ io.on('connection', function(socket) {
   });
 });
 
-// app.get('/rides/chat/:id', function(req, res) {
-//   console.log(req.params)
-//   res.send()
-// });
+app.get('/rides/chat/:id', function(req, res) {
+  Client.connect(url, function(error, db) {
+    var rides = db.collection('rides');
+    var id = parseInt(req.params.id)
+    console.log(id);
+    rides.find({chatId: id}).toArray(function(error, result) {
+      res.json(result);
+      db.close()
+    })
+  })
+});
 
 
 http.listen(8080, function() {

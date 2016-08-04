@@ -145,18 +145,43 @@ hitch.addEventListener('click', function(e) {
     })
   } else if (chat) {
     var messageUl = chat.slice(4, 17);
-    makeChat(messageUl);
+    var rideInfo = [];
+    var seats = []
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/rides/chat/' + messageUl);
+    xhr.send();
+
+    xhr.addEventListener('load', function() {
+      var response = JSON.parse(xhr.response);
+
+
+      response.forEach(function(result) {
+        rideInfo.venue = result.venue;
+        rideInfo.info = result.info;
+        rideInfo.seats = result.seats;
+
+      })
+      makeChat(messageUl, rideInfo);
+      console.log(rideInfo)
+
+    })
+
+    // $('#landing').addClass('hidden');
+
   }
 });
 
-function makeChat(messageUl) {
+function makeChat(messageUl, rideInfo) {
   var chatArea = document.getElementById('chat-area');
 
   var div = document.createElement('div');
-  div.setAttribute('class', 'col-md-6');
+  div.setAttribute('class', 'col-md-12');
+
 
   var panel = document.createElement('div');
   panel.setAttribute('class', 'panel panel-default')
+  panel.textContent = rideInfo.venue;
 
   var messageArea = document.createElement('div');
   messageArea.className = 'panel-body';
@@ -168,15 +193,22 @@ function makeChat(messageUl) {
   message.setAttribute('id', 'chat' + messageUl);
 
   var input = document.createElement('input');
-  input.setAttribute('class', 'text');
+  input.className = 'form-control'
+  input.setAttribute('type', 'text');
   input.setAttribute('id', 'text' + messageUl);
+  input.setAttribute('autocomplete', 'off')
+
+  var inputDiv = document.createElement('div');
+  inputDiv.className = 'col-md-12';
+  var sendButton = document.createElement('button')
 
   chatArea.appendChild(div);
   div.appendChild(panel);
   panel.appendChild(messageArea);
   messageArea.appendChild(form);
   form.appendChild(message);
-  form.appendChild(input);
+  form.appendChild(inputDiv);
+  inputDiv.appendChild(input);
 
   var socket = io();
   $('#' + 'form' + messageUl.toString()).submit(function() {
