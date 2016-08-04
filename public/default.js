@@ -61,6 +61,7 @@ function makeRide(response) {
   body.appendChild(toolbar);
 };
 
+
 window.addEventListener('DOMContentLoaded', function() {
   var xhr = new XMLHttpRequest();
   xhr.open('GET', '/rides');
@@ -77,7 +78,6 @@ window.addEventListener('DOMContentLoaded', function() {
     })
   });
 });
-
 
 //User can create new carpool
 makeCarpoolBtn.on('click', function(e) {
@@ -122,12 +122,8 @@ cancel.addEventListener('click', function(e) {
   $('#carpool-info').addClass('hidden')
 });
 
-
 //User can join ride
 hitch.addEventListener('click', function(e) {
-  // var target = e.target.getAttribute('data-id') || e.target.getAttribute('data-chat');
-
-
   var join = e.target.getAttribute('data-id');
   var chat = e.target.getAttribute('data-chat');
   e.preventDefault();
@@ -148,59 +144,51 @@ hitch.addEventListener('click', function(e) {
       })
     })
   } else if (chat) {
-    var chatArea = document.getElementById('chat-area');
     var messageUl = chat.slice(4, 17);
-    console.log(messageUl)
-
-    function makeChat() {
-      var div = document.createElement('div');
-      div.className = 'col-md-6';
-
-      var panel = document.createElement('div');
-      div.className = 'panel panel-default';
-
-      var messageArea = document.createElement('div');
-      messageArea.className = 'panel-body';
-
-      var form = document.createElement('form');
-      form.setAttribute('id', 'form' + messageUl);
-
-      var message = document.createElement('ul');
-      message.setAttribute('id', 'chat' + messageUl);
-
-      var input = document.createElement('input');
-      input.setAttribute('class', 'text');
-      input.setAttribute('id', 'text' + messageUl);
-
-      chatArea.appendChild(div);
-      div.appendChild(panel);
-      panel.appendChild(messageArea);
-      messageArea.appendChild(form);
-      form.appendChild(message);
-      form.appendChild(input);
-
-      var socket = io();
-      $('#' + 'form' + messageUl.toString()).submit(function() {
-        socket.emit('chat message', $('#text' + messageUl.toString()).val());
-        $('#text' + messageUl.toString()).val('');
-        return false;
-      });
-      socket.on('chat message', function(message) {
-        $('#chat' + messageUl.toString()).append($('<li>').text(message));
-        console.log(message);
-      });
-    }
-    makeChat();
+    makeChat(messageUl);
   }
 });
 
-// landing.addClass('hidden');
-// var param = chat.slice(4, 17);
-// console.log(param)
-// var xhr = new XMLHttpRequest();
-// xhr.open('GET', 'rides/chat/' + param);
-// xhr.send()
+function makeChat(messageUl) {
+  var chatArea = document.getElementById('chat-area');
 
+  var div = document.createElement('div');
+  div.setAttribute('class', 'col-md-6');
+
+  var panel = document.createElement('div');
+  panel.setAttribute('class', 'panel panel-default')
+
+  var messageArea = document.createElement('div');
+  messageArea.className = 'panel-body';
+
+  var form = document.createElement('form');
+  form.setAttribute('id', 'form' + messageUl);
+
+  var message = document.createElement('ul');
+  message.setAttribute('id', 'chat' + messageUl);
+
+  var input = document.createElement('input');
+  input.setAttribute('class', 'text');
+  input.setAttribute('id', 'text' + messageUl);
+
+  chatArea.appendChild(div);
+  div.appendChild(panel);
+  panel.appendChild(messageArea);
+  messageArea.appendChild(form);
+  form.appendChild(message);
+  form.appendChild(input);
+
+  var socket = io();
+  $('#' + 'form' + messageUl.toString()).submit(function() {
+    socket.emit('chat message', $('#text' + messageUl.toString()).val());
+    $('#text' + messageUl.toString()).val('');
+    return false;
+  });
+  socket.on('chat message', function(message) {
+    $('#chat' + messageUl.toString()).append($('<li>').text(message));
+    console.log(message);
+  });
+};
 
 function clear(area) {
   while(area.firstChild) {
