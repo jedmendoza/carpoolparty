@@ -7,6 +7,7 @@ var ride = document.getElementById('hitch');
 var newCarpool = $('#new-carpool');
 var seats = $('#seats');
 var hitch = document.getElementById('hitch');
+var landing = $('#landing');
 
 function resetRide() {
   festival.val('Coachella');
@@ -47,6 +48,7 @@ function makeRide(response) {
   var chat = document.createElement('button');
   chat.className = 'btn';
   chat.textContent = "Chat";
+  chat.setAttribute('data-chat', 'chat' +response.chatId);
 
   toolbar.appendChild(btnDiv);
   btnDiv.appendChild(join);
@@ -58,6 +60,7 @@ function makeRide(response) {
   body.appendChild(info);
   body.appendChild(toolbar);
 };
+
 
 window.addEventListener('DOMContentLoaded', function() {
   var xhr = new XMLHttpRequest();
@@ -75,7 +78,6 @@ window.addEventListener('DOMContentLoaded', function() {
     })
   });
 });
-
 
 //User can create new carpool
 makeCarpoolBtn.on('click', function(e) {
@@ -114,33 +116,114 @@ newCarpool.on('submit', function(e) {
   });
 });
 
+//User can cancel making a ride
 cancel.addEventListener('click', function(e) {
   rideInfo.value = '';
   $('#carpool-info').addClass('hidden')
 });
 
+//User can join ride
 hitch.addEventListener('click', function(e) {
-  var target = e.target.getAttribute('data-id');
-  var param = target.slice(4, 17);
+  var join = e.target.getAttribute('data-id');
+  var chat = e.target.getAttribute('data-chat');
+  e.preventDefault();
 
-  var xhr = new XMLHttpRequest();
-  xhr.open('PUT', '/rides/' + param);
-  xhr.send()
+  if (join) {
+    var param = join.slice(4, 17);
+    var xhr = new XMLHttpRequest();
+    xhr.open('PUT', '/rides/' + param);
+    xhr.send()
 
-  xhr.addEventListener('load', function() {
-    var response = JSON.parse(xhr.response);
-    console.log(response);
-    clear(hitch)
-    response.forEach(function(result) {
-      if (result.seats >= 0){
-        makeRide(result)
-      }
-    });
-  });
+    xhr.addEventListener('load', function() {
+      var response = JSON.parse(xhr.response);
+      clear(hitch)
+      response.forEach(function(result) {
+        if (result.seats >= 0){
+          makeRide(result)
+        }
+      })
+    })
+  } else if (chat) {
+    var messageUl = chat.slice(4, 17);
+    var rideInfo = [];
+    var seats = []
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', '/rides/chat/' + messageUl);
+    xhr.send();
+
+    xhr.addEventListener('load', function() {
+      var response = JSON.parse(xhr.response);
+
+
+      response.forEach(function(result) {
+        rideInfo.venue = result.venue;
+        rideInfo.info = result.info;
+        rideInfo.seats = result.seats;
+
+      })
+      makeChat(messageUl, rideInfo);
+      console.log(rideInfo)
+
+    })
+
+    // $('#landing').addClass('hidden');
+
+  }
 });
+
+function makeChat(messageUl, rideInfo) {
+  var chatArea = document.getElementById('chat-area');
+
+  var div = document.createElement('div');
+  div.setAttribute('class', 'col-md-12');
+
+
+  var panel = document.createElement('div');
+  panel.setAttribute('class', 'panel panel-default')
+  panel.textContent = rideInfo.venue;
+
+  var messageArea = document.createElement('div');
+  messageArea.className = 'panel-body';
+
+  var form = document.createElement('form');
+  form.setAttribute('id', 'form' + messageUl);
+
+  var message = document.createElement('ul');
+  message.setAttribute('id', 'chat' + messageUl);
+
+  var input = document.createElement('input');
+  input.className = 'form-control'
+  input.setAttribute('type', 'text');
+  input.setAttribute('id', 'text' + messageUl);
+  input.setAttribute('autocomplete', 'off')
+
+  var inputDiv = document.createElement('div');
+  inputDiv.className = 'col-md-12';
+  var sendButton = document.createElement('button')
+
+  chatArea.appendChild(div);
+  div.appendChild(panel);
+  panel.appendChild(messageArea);
+  messageArea.appendChild(form);
+  form.appendChild(message);
+  form.appendChild(inputDiv);
+  inputDiv.appendChild(input);
+
+  var socket = io();
+  $('#' + 'form' + messageUl.toString()).submit(function() {
+    socket.emit('chat message', $('#text' + messageUl.toString()).val());
+    $('#text' + messageUl.toString()).val('');
+    return false;
+  });
+  socket.on('chat message', function(message) {
+    $('#chat' + messageUl.toString()).append($('<li>').text(message));
+    console.log(message);
+  });
+};
 
 function clear(area) {
   while(area.firstChild) {
     area.removeChild(area.firstChild)
   }
-}
+};
